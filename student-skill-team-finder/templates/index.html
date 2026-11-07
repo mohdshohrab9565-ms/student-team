@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSync | Student Skill & Project Team Finder</title>
+    <meta name="description" content="Connect skills, form dream teams, and build winning hackathons and college projects with intelligent matchmaking.">
+    
+    <!-- GitHub Pages SPA Redirect Handler -->
+    <script type="text/javascript">
+      (function (l) {
+        if (l.search[1] === "/") {
+          var decoded = l.search
+            .slice(1)
+            .split("&")
+            .map(function (s) {
+              return s.replace(/~and~/g, "&");
+            })
+            .join("?");
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      })(window.location);
+    </script>
+
+    <!-- Design System Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Favicon (SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+</head>
+<body>
+
+    <!-- Ambient Glowing Background Blobs -->
+    <div class="bg-ambient">
+        <div class="ambient-blob blob-1"></div>
+        <div class="ambient-blob blob-2"></div>
+        <div class="ambient-blob blob-3"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a class="brand-logo" href="#">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                </div>
+                <span>SkillSync</span>
+                <span class="brand-badge">Campus</span>
+            </a>
+
+            <!-- Nav Links / Tabs -->
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a class="nav-link active" data-tab="teammates">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Find Teammates
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="projects">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                        Explore Projects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="builder">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        Smart Team Builder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="dashboard">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        My Dashboard
+                        <span class="badge-counter" id="requestsBadgeCounter" style="display:none;">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Nav Actions -->
+            <div class="nav-actions">
+                <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+                    <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+
+                <!-- Profile Pill Shortcut -->
+                <div class="profile-pill" title="View Profile & Settings">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" alt="Alex Rivera" />
+                    <span>Alex Rivera</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-tag">
+                <span>⚡ Built for Hackathons, Capstones & Tech Clubs</span>
+            </div>
+            <h1>
+                Find the Missing Skill in <br>
+                <span class="gradient-text">Your Dream Project Team</span>
+            </h1>
+            <p class="hero-subtitle">
+                Connect with complementary student developers, AI researchers, and UI/UX designers. Form balanced squads and turn ambitious ideas into winning projects.
+            </p>
+
+            <!-- Quick Metrics -->
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">1,420+</span>
+                    <span class="stat-label">Verified Students</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">380+</span>
+                    <span class="stat-label">Projects Created</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">94%</span>
+                    <span class="stat-label">Team Match Rate</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">65+</span>
+                    <span class="stat-label">Hackathon Wins</span>
+                </div>
+            </div>
+
+            <!-- Instant Search Bar -->
+            <div class="hero-search-box">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="globalHeroSearch" placeholder="Search by skill (e.g. React, PyTorch, Figma), domain, or student name..." />
+                <button class="btn btn-primary" onclick="document.querySelector('[data-tab=teammates]').click();">
+                    Find Teammates
+                </button>
+            </div>
+
+            <!-- Quick Filter Chips -->
+            <div class="quick-skill-tags">
+                <span class="quick-tag-label">Popular Skills:</span>
+                <button class="quick-tag" data-skill="React">React</button>
+                <button class="quick-tag" data-skill="Python">Python</button>
+                <button class="quick-tag" data-skill="Flutter">Flutter</button>
+                <button class="quick-tag" data-skill="PyTorch">PyTorch</button>
+                <button class="quick-tag" data-skill="Figma / UI/UX Design">Figma UI/UX</button>
+                <button class="quick-tag" data-skill="Docker">Docker</button>
+                <button class="quick-tag" data-skill="Solidity">Solidity</button>
+                <button class="quick-tag" data-skill="C++">C++</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Views Container -->
+    <main class="container">
+
+        <!-- VIEW 1: FIND TEAMMATES (STUDENT DIRECTORY) -->
+        <section id="view-teammates" class="view-section active">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <h2>Student Skill Directory</h2>
+                    <p id="teammateCount">Discover talented peers with verified skills and availability</p>
+                </div>
+                <div>
+                    <button class="btn btn-secondary btn-sm" id="resetTeammateFiltersBtn">
+                        Clear All Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Controls Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <select class="filter-select" id="filterDomain">
+                        <option value="All Domains">All Domains</option>
+                        <option value="Full Stack Web">Full Stack Web</option>
+                        <option value="AI / Machine Learning">AI / Machine Learning</option>
+                        <option value="Mobile & UI/UX">Mobile & UI/UX</option>
+                        <option value="Cloud & DevOps">Cloud & DevOps</option>
+                        <option value="IoT & Hardware">IoT & Hardware</option>
+                        <option value="Cybersecurity & Web3">Cybersecurity & Web3</option>
+                        <option value="Data Science & Analytics">Data Science & Analytics</option>
+                        <option value="Frontend Web">Frontend Web</option>
+                        <option value="Backend & Systems">Backend & Systems</option>
+                    </select>
+
+                    <select class="filter-select" id="filterSkill">
+                        <option value="All Skills">All Skills</option>
+                    </select>
+
+                    <select class="filter-select" id="filterCollege">
+                        <option value="All Colleges">All Colleges</option>
+                    </select>
+
+                    <select class="filter-select" id="filterAvailability">
+                        <option value="All Availability">All Availability</option>
+                        <option value="Actively Looking">Actively Looking</option>
+                        <option value="Open to Offers">Open to Offers</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <div class="search-input-wrapper">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="filter-search-input" id="searchTeammate" placeholder="Search students..." />
+                    </div>
+
+                    <select class="filter-select" id="sortTeammate">
+                        <option value="match">Sort by: Best Match</option>
+                        <option value="rating">Sort by: Top Rated</option>
+                        <option value="projects">Sort by: Most Projects</option>
+                        <option value="name">Sort by: Name (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Student Cards Grid -->
+            <div class="cards-grid" id="teammatesGrid"></div>
+        </section>
+
+        <!-- VIEW 2: EXPLORE PROJECTS & HACKATHON OPENINGS -->
+        <section id="view-projects" class="view-section">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <h2>Project & Hackathon Openings</h2>
+                    <p id="projectCount">Join ambitious projects looking for teammates right now</p>
+                </div>
+                <button class="btn btn-primary" id="btnOpenPostProject">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Post Project Opening
+                </button>
+            </div>
+
+            <!-- Project Filters Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <select class="filter-select" id="filterProjectCategory">
+                        <option value="All Categories">All Categories</option>
+                    </select>
+
+                    <select class="filter-select" id="filterProjectStatus">
+                        <option value="All">All Statuses</option>
+                        <option value="Open">Open Positions</option>
+                        <option value="In Progress">In Progress</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <div class="search-input-wrapper">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="filter-search-input" id="searchProject" placeholder="Filter projects or roles..." />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Cards Grid -->
+            <div class="cards-grid" id="projectsGrid"></div>
+        </section>
+
+        <!-- VIEW 3: SMART TEAM BUILDER & MATCHER STUDIO -->
+        <section id="view-builder" class="view-section">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <h2>Smart Team Builder Studio</h2>
+                    <p>Select required tech skills, analyze squad coverage, and draft your 4-person dream squad</p>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-secondary btn-sm" id="clearRosterBtn">Reset Roster</button>
+                    <button class="btn btn-accent btn-sm" id="copyRosterSummaryBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copy Team Summary
+                    </button>
+                </div>
+            </div>
+
+            <div class="studio-layout">
+                <!-- Left Sidebar: Required Tech Stack Configuration -->
+                <div class="studio-sidebar">
+                    <h3>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        Project Requirements
+                    </h3>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">
+                        Click skills to toggle them in your project's target tech stack. Candidates are ranked automatically.
+                    </p>
+
+                    <div class="skill-selector-box">
+                        <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Click Skills to Include:</label>
+                        <div class="skill-tag-picker" id="studioSkillPicker"></div>
+                    </div>
+
+                    <!-- Squad Coverage Metric Card -->
+                    <div style="background:var(--bg-input); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px; margin-top:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <span style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Team Stack Coverage:</span>
+                            <span id="teamCoverageScore" style="font-size:1.15rem; font-weight:800; color:var(--accent-emerald);">85%</span>
+                        </div>
+                        <div id="missingSkillsWrap"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Roster Bench & Ranked Match List -->
+                <div>
+                    <!-- 4-Slot Roster Bench -->
+                    <div class="roster-bench">
+                        <div class="bench-header">
+                            <div>
+                                <h3 style="font-size:1.2rem; font-weight:700;">Squad Lineup Bench (4 Slots)</h3>
+                                <p style="font-size:0.85rem; color:var(--text-muted);">Assign students from the smart candidate recommendations below</p>
+                            </div>
+                        </div>
+
+                        <div class="roster-slots-grid" id="rosterSlotsGrid"></div>
+                    </div>
+
+                    <!-- Recommended Candidates -->
+                    <div>
+                        <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:12px;">
+                            Recommended Candidates (Ranked by Match Score)
+                        </h3>
+                        <div id="studioCandidatesList"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: DASHBOARD & COLLABORATION HUB -->
+        <section id="view-dashboard" class="view-section">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <h2>Collaboration Hub & Settings</h2>
+                    <p>Manage your profile, team applications, starred students, and published projects</p>
+                </div>
+                <button class="btn btn-outline btn-sm" id="resetDemoBtn" title="Reset all changes back to clean demo data">
+                    🔄 Reset Demo Data
+                </button>
+            </div>
+
+            <!-- Subtabs Navigation -->
+            <div class="dashboard-subtabs">
+                <button class="subtab-btn active" data-subtab="profile">👤 My Profile</button>
+                <button class="subtab-btn" data-subtab="requests">📬 Applications & Requests</button>
+                <button class="subtab-btn" data-subtab="bookmarks">★ Saved Bookmarks</button>
+                <button class="subtab-btn" data-subtab="myprojects">🚀 My Posted Projects</button>
+            </div>
+
+            <!-- SUBTAB 1: Profile Editor -->
+            <div id="dashSubtabProfile">
+                <form id="profileForm">
+                    <div class="profile-edit-grid">
+                        <div class="avatar-edit-col">
+                            <img id="profileAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" alt="Avatar" class="large-avatar-preview" />
+                            <div style="font-weight:700; font-size:1.1rem; margin-bottom:4px;">Alex Rivera</div>
+                            <div style="font-size:0.82rem; color:var(--brand-primary); font-weight:600; margin-bottom:16px;">Verified Campus Member</div>
+                            <span class="availability-badge avail-looking">● Actively Looking</span>
+                        </div>
+
+                        <div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" id="profileFullName" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <label>College / University</label>
+                                    <input type="text" id="profileCollege" class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Course Degree</label>
+                                    <input type="text" id="profileCourse" class="form-control" placeholder="e.g. B.Tech" required />
+                                </div>
+                                <div class="form-group">
+                                    <label>Branch / Major</label>
+                                    <input type="text" id="profileBranch" class="form-control" placeholder="e.g. Computer Science" required />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Semester / Year</label>
+                                    <input type="text" id="profileSemester" class="form-control" placeholder="e.g. 6th Semester" required />
+                                </div>
+                                <div class="form-group">
+                                    <label>Team Availability</label>
+                                    <select id="profileAvailability" class="form-control">
+                                        <option value="Actively Looking">Actively Looking</option>
+                                        <option value="Open to Offers">Open to Offers</option>
+                                        <option value="Busy / In a Team">Busy / In a Team</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Bio / Elevator Pitch</label>
+                                <textarea id="profileBio" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Key Experience & Previous Projects</label>
+                                <textarea id="profileExperience" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>GitHub Profile URL</label>
+                                    <input type="url" id="profileGithub" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label>LinkedIn Profile URL</label>
+                                    <input type="url" id="profileLinkedin" class="form-control" />
+                                </div>
+                            </div>
+
+                            <!-- Skills Tag Editor -->
+                            <div class="form-group" style="border-top:1px solid var(--border-color); padding-top:16px;">
+                                <label style="margin-bottom:8px;">My Technical & Soft Skills</label>
+                                <div id="profileSkillsList" class="skills-container" style="margin-bottom:12px;"></div>
+
+                                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                    <input type="text" id="newSkillName" class="form-control" placeholder="Add skill (e.g. Tailwind CSS)" style="flex:1; min-width:180px;" />
+                                    <select id="newSkillLevel" class="form-control" style="width:140px;">
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert</option>
+                                    </select>
+                                    <button type="button" class="btn btn-secondary" id="btnAddSkillToProfile">+ Add Skill</button>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; justify-content:flex-end; margin-top:24px;">
+                                <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- SUBTAB 2: Requests & Applications -->
+            <div id="dashSubtabRequests" style="display:none;">
+                <div class="requests-list" id="requestsListContainer"></div>
+            </div>
+
+            <!-- SUBTAB 3: Bookmarks -->
+            <div id="dashSubtabBookmarks" style="display:none;">
+                <h3 style="font-size:1.15rem; margin-bottom:14px;">Starred Student Profiles</h3>
+                <div id="bookmarksStudentsGrid" style="margin-bottom:28px;"></div>
+
+                <h3 style="font-size:1.15rem; margin-bottom:14px;">Starred Projects</h3>
+                <div id="bookmarksProjectsGrid"></div>
+            </div>
+
+            <!-- SUBTAB 4: My Posted Projects -->
+            <div id="dashSubtabMyProjects" style="display:none;">
+                <div id="myProjectsGrid"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL 1: STUDENT PROFILE DETAILS MODAL -->
+    <div class="modal-overlay" id="studentModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Student Profile</h3>
+                <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body" id="studentModalBody"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: PROJECT DETAILS & APPLY MODAL -->
+    <div class="modal-overlay" id="projectModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Project Team Opening</h3>
+                <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body" id="projectModalBody"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: POST NEW PROJECT MODAL -->
+    <div class="modal-overlay" id="postProjectModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Post a Project / Need Teammates</h3>
+                <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="postProjectForm">
+                    <div class="form-group">
+                        <label>Project Title *</label>
+                        <input type="text" id="newProjectTitle" class="form-control" placeholder="e.g. EcoPulse: Smart Campus Solar Telemetry" required />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Domain / Category *</label>
+                            <select id="newProjectCategory" class="form-control" required>
+                                <option value="Web Development">Web Development</option>
+                                <option value="AI / Machine Learning">AI / Machine Learning</option>
+                                <option value="Mobile & UI/UX">Mobile & UI/UX</option>
+                                <option value="Cloud & DevOps">Cloud & DevOps</option>
+                                <option value="IoT & Hardware">IoT & Hardware</option>
+                                <option value="Cybersecurity & Web3">Cybersecurity & Web3</option>
+                                <option value="Data Science & Analytics">Data Science & Analytics</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Team Size</label>
+                            <select id="newProjectSize" class="form-control">
+                                <option value="3">3 Members</option>
+                                <option value="4" selected>4 Members</option>
+                                <option value="5">5 Members</option>
+                                <option value="6">6 Members</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hackathon or Event Target</label>
+                        <input type="text" id="newProjectTarget" class="form-control" placeholder="e.g. Smart India Hackathon, Final Year Capstone, ETHIndia" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Roles / Positions You're Looking For (comma separated) *</label>
+                        <input type="text" id="newProjectPositions" class="form-control" placeholder="e.g. UI/UX Designer, Mobile App Developer, Cloud Lead" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Required Tech Stack (comma separated) *</label>
+                        <input type="text" id="newProjectSkills" class="form-control" placeholder="e.g. React, Flutter, Python, Docker" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Project Description & Problem Statement *</label>
+                        <textarea id="newProjectDesc" class="form-control" rows="4" placeholder="Explain the problem you're solving, current progress, and what you want to achieve together..." required></textarea>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
+                        <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Publish Project Opening 🚀</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: INVITE TO TEAM MODAL -->
+    <div class="modal-overlay" id="inviteModal">
+        <div class="modal-dialog" style="max-width:520px;">
+            <div class="modal-header">
+                <h3>Invite Teammate</h3>
+                <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:0.92rem; color:var(--text-secondary); margin-bottom:16px;">
+                    Invite <strong id="inviteStudentName" style="color:var(--text-primary);"></strong> to collaborate on your project:
+                </p>
+
+                <div class="form-group">
+                    <label>Choose Your Project:</label>
+                    <select id="inviteProjectSelect" class="form-control"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Personal Message / Role Offer:</label>
+                    <textarea id="inviteMessage" class="form-control" rows="3" placeholder="Hey! We saw your profile and would love to have your skills on our squad..."></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="btnSendInvite">Send Invitation ✉️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE FLOATING CHAT DRAWER -->
+    <aside class="chat-drawer" id="chatDrawer">
+        <div class="chat-header">
+            <div class="chat-user-meta">
+                <img id="chatDrawerAvatar" src="" alt="Chat User" />
+                <div>
+                    <div id="chatDrawerName" style="font-weight:700; font-size:0.9rem;"></div>
+                    <div id="chatDrawerRole" style="font-size:0.75rem; color:var(--brand-primary);"></div>
+                </div>
+            </div>
+            <button class="modal-close-btn" id="chatCloseBtn">&times;</button>
+        </div>
+        <div class="chat-messages-container" id="chatMessages"></div>
+        <div class="chat-input-bar">
+            <input type="text" id="chatInput" placeholder="Write a message..." />
+            <button class="btn btn-primary btn-sm" id="chatSendBtn" style="padding:7px 12px;">Send</button>
+        </div>
+    </aside>
+
+    <!-- Floating Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-inner">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="brand-icon" style="width:28px; height:28px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                </div>
+                <span><strong>SkillSync</strong> — Student Skill & Project Team Finder</span>
+            </div>
+            <ul class="footer-links">
+                <li><a href="#" onclick="document.querySelector('[data-tab=teammates]').click(); return false;">Find Teammates</a></li>
+                <li><a href="#" onclick="document.querySelector('[data-tab=projects]').click(); return false;">Browse Projects</a></li>
+                <li><a href="#" onclick="document.querySelector('[data-tab=builder]').click(); return false;">Dream Team Studio</a></li>
+                <li><a href="#" onclick="document.querySelector('[data-tab=dashboard]').click(); return false;">My Dashboard</a></li>
+            </ul>
+            <div style="font-size:0.82rem; color:var(--text-muted);">
+                HTML5 • CSS3 • Vanilla JavaScript (ES6+) • Fully Local & Offline Ready
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/data.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
